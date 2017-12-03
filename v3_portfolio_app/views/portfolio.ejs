@@ -1,0 +1,261 @@
+<% include partials/header %>
+
+<div class="">
+	<div class="box portfolio-box">
+	</div>
+	<div class="portfolio-top-data row">
+		<div class="col-lg-12">
+			<h1 class="h1_market">thou portfolio</h1>
+		</div>
+	</div>
+</div>
+
+<div class="container portfolio-summary">
+  <div class="row">
+    <div class="col-lg-6">
+      <h4 id="portfoio-value-show">Portfolio Value</h4>
+      <h5 id="portfolio-fiat"></h5>
+      <hr>
+      <div class="row">
+        <div class="col-lg-12">
+          <h4 id="portfoio-fiat-show">Available Fiat</h4>
+          <h5 id="fiat-value"></h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <h4>Portfolio Value (BTC)</h4>
+      <h5 id="portfolio-btc"></h5>
+      <hr>
+      <div class="row">
+        <div class="col-lg-6">
+          <h4>Amount in BTC</h4>
+          <h5 id="amount-btc"></h5>
+        </div>
+        <div class="col-lg-6">
+          <h4>Amount in ALTs</h4>
+          <h5 id="amount-btc-alt"></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-lg-6">
+      <h4 id="portfoio-total-pl-show">Total Profit/Loss</h4>
+      <h5 id="total-pl-fiat"></h5>
+    </div>
+    <div class="col-lg-6">
+      <h4>Total Profit/Loss (BTC)</h4>
+      <h5 id="total-pl-btc"></h5>
+    </div>
+  </div>
+</div>
+
+<hr style="width: 83%;">
+
+<div class="container portfolio-data">
+  <div class="row">
+    <div class="col-lg-12 all-coins">
+      <h2>All Coins</h2>
+    </div>
+  </div>
+  <div class="row">
+		<table id="example1" class="table table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+					<th>Name</th>
+          <th>Symbol</th>
+					<th>Units</th>
+					<th>Current Price (BTC)</th>
+          <th id="portfoio-current-fiat">Current Price</th>
+					<th>Profit/Loss BTC</th>
+          <th id="portfoio-pl-fiat">Profit/Loss</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (btc[0].units >= 0.00000001) { %>
+        <tr>
+          <td><%= btc[0].name %></td>
+          <td><%= btc[0].symbol %></td>
+          <td id="portfolio-btc-units"><%= btc[0].units %></td>
+          <td class="portfolio-price-btc"><%= btc[0].current_price_btc %></td>
+          <td class="portfolio-price-usd"><%= btc[0].current_price_usd %></td>
+          <td>-</td>
+          <td id="fiat-pl-btc"></td>
+        </tr>
+        <% } %>
+        <% alt.forEach(function(alt){ %>
+          <% if (alt.units >= 0.00000001) { %>
+            <tr>
+              <td><%= alt.name %></td>
+              <td><%= alt.symbol %></td>
+              <td><%= alt.units %></td>
+              <td class="portfolio-price-btc"><%= alt.current_price_btc %></td>
+              <td class="portfolio-price-usd"><%= alt.current_price_usd %></td>
+              <td class="btc-pl-alt"></td>
+              <td class="fiat-pl-alt"></td>
+            </tr>
+          <% } %>
+        <% }); %>
+			</tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="container portfolio-data">
+  <div class="row">
+    <div class="col-lg-12 buy-orders">
+      <h2>Buy Orders</h2>
+    </div>
+  </div>
+  <div class="row">
+		<table id="example2" class="table table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th style="display: none;">Id</th>
+					<th>Name</th>
+          <th>Symbol</th>
+					<th>Exchange</th>
+					<th>Units</th>
+					<th>Price</th>
+					<th>Total</th>
+					<th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% buy.forEach(function(buy) { %>
+          <% if (buy.name == 'Bitcoin') { %>
+            <tr class="portfolio-buy">
+              <td style="display: none;" class="portfoio-buy-id"><%= buy._id %></td>
+              <td class="portfoio-coin-name"><%= buy.name %></td>
+              <td><%= buy.symbol %></td>
+              <td><%= buy.exchange %></a></td>
+              <td><%= buy.units %></td>
+              <td class="trade-price-usd"><%= buy.trade_price_usd %></td>
+              <td class="trade-price-usd"><%= buy.total_price_usd %></td>
+              <td class="portfoio-date"><%= buy.date.toUTCString() %></td>
+              <td><form action="/portfolio/buy/<%= buy._id %>?_method=DELETE" method="POST" id="delete-coin">
+                <button type="submit" class="btn btn-danger fa fa-trash fa-1x" name="button">
+              </form></td>
+            </tr>
+          <% } else { %>
+            <tr class="portfolio-buy">
+              <td style="display: none;" class="portfoio-buy-id"><%= buy._id %></td>
+              <td class="portfoio-coin-name"><%= buy.name %></td>
+              <td><%= buy.symbol %></td>
+              <td><%= buy.exchange %></a></td>
+              <td><%= buy.units %></td>
+              <td class="price_btc_numbers"><%= buy.trade_price_btc %></td>
+              <td class="portfolio-price price_btc_numbers"><%= buy.total_price_btc %></td>
+              <td class="portfoio-date"><%= buy.date.toUTCString() %></td>
+							<td><form action="/portfolio/buy/<%= buy._id %>?_method=DELETE" method="POST" id="delete-coin">
+                <button type="submit" class="btn btn-danger fa fa-trash fa-1x" name="button">
+              </form></td>
+            </tr>
+          <% } %>
+        <% }); %>
+			</tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container portfolio-data">
+  <div class="row">
+    <div class="col-lg-12 sell-orders">
+      <h2>Sell Orders</h2>
+    </div>
+  </div>
+  <div class="row">
+		<table id="example3" class="table table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th style="display: none;">Id</th>
+					<th>Name</th>
+          <th>Symbol</th>
+					<th>Exchange</th>
+					<th>Units</th>
+					<th>Price</th>
+					<th>Total</th>
+					<th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+				<% sell.forEach(function(sell){ %>
+          <% if (sell.name == 'Bitcoin') { %>
+            <tr>
+              <td style="display: none;" class="portfoio-sell-id"><%= sell._id %></td>
+  						<td><%= sell.name %></td>
+              <td><%= sell.symbol %></td>
+  						<td><%= sell.exchange %></a></td>
+              <td><%= sell.units %></td>
+  						<td class="trade-price-usd"><%= sell.trade_price_usd %></td>
+  						<td class="trade-price-usd"><%= sell.total_price_usd %></td>
+  						<td class="portfoio-date"><%= sell.date.toUTCString() %></td>
+							<td><form action="/portfolio/sell/<%= sell._id %>?_method=DELETE" method="POST" id="delete-coin">
+                <button type="submit" class="btn btn-danger fa fa-trash fa-1x" name="button">
+              </form></td>
+            </tr>
+          <% } else { %>
+            <tr>
+              <td style="display: none;" class="portfoio-sell-id"><%= sell._id %></td>
+  						<td><%= sell.name %></td>
+              <td><%= sell.symbol %></td>
+  						<td><%= sell.exchange %></a></td>
+              <td><%= sell.units %></td>
+  						<td class="price_btc_numbers"><%= sell.trade_price_btc %></td>
+  						<td class="portfolio-price price_btc_numbers"><%= sell.total_price_btc %></td>
+  						<td class="portfoio-date"><%= sell.date.toUTCString() %></td>
+							<td><form action="/portfolio/sell/<%= sell._id %>?_method=DELETE" method="POST" id="delete-coin">
+                <button type="submit" class="btn btn-danger fa fa-trash fa-1x" name="button">
+              </form></td>
+            </tr>
+          <% } %>
+				<% }); %>
+			</tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container portfolio-data">
+  <div class="row">
+    <div class="col-lg-12 fiat-trx">
+      <h2>Fiat Orders</h2>
+    </div>
+  </div>
+  <div class="row">
+		<table id="example4" class="table table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+					<th>Cuurency</th>
+					<th>Symbol</th>
+					<th>Exchange</th>
+					<th>Amount</th>
+					<th>Amount in USD</th>
+					<th>Date</th>
+					<th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+				<% fiatBuy.forEach(function(fiatBuy){ %>
+	        <tr>
+	          <td><%= fiatBuy.currency %></td>
+	          <td><%= fiatBuy.symbol %>/<%= fiatBuy.show %></td>
+						<td><%= fiatBuy.exchange %></td>
+	          <td class="fiat-buy-amount"><%= fiatBuy.show %><%= fiatBuy.amount %></td>
+	          <td class="fiat-buy-usd-amount"><%= fiatBuy.amount %></td>
+	          <td class="fiat-buy-date"><%= fiatBuy.date.toUTCString() %></td>
+						<td><form action="/fiat/<%= fiatBuy._id %>?_method=DELETE" method="POST" id="delete-coin">
+							<button type="submit" class="btn btn-danger fa fa-trash fa-1x" name="button">
+						</form></td>
+	        </tr>
+				<% }); %>
+			</tbody>
+    </table>
+  </div>
+</div>
+
+<% include partials/footer %>

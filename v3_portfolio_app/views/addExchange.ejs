@@ -1,0 +1,85 @@
+<% include partials/header %>
+
+<div class="modal fade" id="orderTypeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please select an order type first.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="sameExchangeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				You already have an exchange with the same name. Each exchange can either trade a <%= coin.symbol %>/BTC pair or BTC/ALT pair, but not both :(
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container transfer-coin-heading">
+	<div class="row">
+		<div class="col-lg-12">
+			<h1>Add an Exchange</h1>
+		</div>
+  </div>
+</div>
+
+
+<div class="container new-coin-container">
+  <form action="/addExchange" method="POST" id="add-exchange-form">
+    <div class="form-group" style="display: none;">
+      <input type="text" class="form-control" id="Referer" name="exchange[referer]" value="<%= back %>">
+    </div>
+    <div class="form-group">
+      <label for="exchange-name">Exchange Name</label>
+      <input type="text" class="form-control" id="exchange-name" name="exchange[name]" autocomplete="off" required>
+    </div>
+    <div class="form-group order-type-group">
+      <label for="type">Type</label>
+      <div class="form-check form-check-inline">
+        <label class="form-check-label">
+          <input class="form-check-input" type="radio" name="exchange[type]" id="type" value="fiat-btc" required> <%= coin.symbol %>/BTC
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <label class="form-check-label">
+          <input class="form-check-input" type="radio" name="exchange[type]" id="type" value="btc-alt" required> BTC/ALT
+        </label>
+      </div>
+    </div>
+    <div class="form-group name">
+      <label for="exchange-fee-percent">Trading Fee %</label>
+      <input type="text" class="form-control" name="exchange[tradingfeePercent]" id="exchange-fee-percent" autocomplete="off" placeholder="Fee %">
+    </div>
+    <p class="exchange-or">or</p>
+    <div class="form-group symbol">
+      <label for="exchange-fee-btc">Trading Fee (BTC)</label>
+      <input type="text" class="form-control" name="exchange[tradingfeeBtc]" id="exchange-fee-btc" autocomplete="off" placeholder="Fee BTC">
+    </div>
+		<div class="form-group name">
+      <label for="exchange-transfer-fee-percent">Transfer Fee %</label>
+      <input type="text" class="form-control" name="exchange[transferfeePercent]" id="exchange-transfer-fee-percent" autocomplete="off" placeholder="Fee %">
+    </div>
+    <p class="exchange-or">or</p>
+    <div class="form-group symbol">
+      <label for="exchange-transfer-fee-btc">Transfer Fee (BTC)</label>
+      <input type="text" class="form-control" name="exchange[transferfeeBtc]" id="exchange-transfer-fee-btc" autocomplete="off" placeholder="Fee BTC">
+    </div>
+    <div class="form-group">
+			<input type="submit" class="btn btn-lg btn-primary btn-block" id="click" name="" value="Submit">
+    </div>
+  </form>
+</div>
+
+
+<% include partials/footer %>

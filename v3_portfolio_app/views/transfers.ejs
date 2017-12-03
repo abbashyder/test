@@ -1,0 +1,110 @@
+<% include partials/header %>
+
+<div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please select an exchange first.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="addFeeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please add the fee for the transaction.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="lessBtcModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				You do not have enough BTC in this Exchange. Please reduce your order size or add some BTC.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="sameExchangeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				You cannot tranfer Bitcoins within the same exchange. Please review your order.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container transfer-coin-heading">
+	<div class="row">
+		<div class="col-lg-12">
+			<h1>Transfer Bitcoin</h1>
+		</div>
+  </div>
+</div>
+
+<div class="container new-coin-container">
+  <form action="/transfers" method="POST" id="transfer-coin-form">
+    <div class="form-group name">
+      <label for="currency">Currency</label>
+      <input type="text" class="form-control" id="transfer-currency" name="transfer[currency]" autocomplete="off" value="Bitcoin" readonly required>
+    </div>
+		<div class="form-group symbol">
+      <label for="symbol">Symbol</label>
+      <input type="text" class="form-control" id="transfer-symbol" name="transfer[symbol]" autocomplete="off" value="BTC" readonly required>
+    </div>
+    <div class="form-group name">
+      <label for="from-exchange">From Exchange</label>
+      <select class="form-control" id="from-exchange" name="transfer[fromExchange]" required>
+				<option value="" selected disabled>Select an Exchange</option>
+				<% exchange.forEach(function(ex){ %>
+					<option><%= ex.exchange %></option>
+				<% }) %>
+	    </select>
+    </div>
+		<div class="form-group symbol">
+      <label for="to-exchange">To Exchange</label>
+      <select class="form-control" id="to-exchange" name="transfer[toExchange]" required>
+				<option value="" selected disabled>Select an Exchange</option>
+				<% exchange.forEach(function(ex){ %>
+					<option><%= ex.exchange %></option>
+				<% }) %>
+	    </select>
+    </div>
+    <div class="form-group name">
+      <label for="transfer-units">Units</label>
+      <input type="text" class="form-control" name="transfer[units]" id="transfer-units" autocomplete="off" placeholder="Units" required>
+    </div>
+    <div class="form-group symbol">
+      <label for="transfer-fee">Fee (BTC)</label>
+      <input type="text" class="form-control" name="transfer[fee]" id="transfer-fee" autocomplete="off" placeholder="Fees" required>
+    </div>
+    <div class="form-group total">
+      <label for="transfer-total">Total</label>
+      <input type="text" class="form-control" name="transfer[total]" id="transfer-total" autocomplete="off" placeholder="Total" required>
+    </div>
+    <div class="form-group">
+			<input type="submit" class="btn btn-lg btn-primary btn-block" id="click" name="" value="Submit">
+    </div>
+  </form>
+</div>
+
+<% include partials/footer %>

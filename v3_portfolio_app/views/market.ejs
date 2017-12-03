@@ -1,0 +1,44 @@
+<% include partials/header %>
+
+<div class="">
+	<div class="box market-box">
+	</div>
+	<div class="market-data row">
+		<div class="col-lg-12">
+			<h1 class="h1_market">the market</h1>
+		</div>
+	</div>
+</div>
+
+<div class="container market-container">
+  <div class="row">
+		<table id="marketTable" class="table table-hover" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+					<th>Rank</th>
+					<th>Currency</th>
+					<th>Symbol</th>
+					<th>Price</th>
+					<th>Price BTC</th>
+					<th>Market Cap</th>
+					<th>% Change 24h</th>
+        </tr>
+      </thead>
+      <tbody>
+				<% coins.forEach(function(coins){ %>
+          <tr>
+						<td><%= coins.rank %></td>
+						<td id="market-coin-name"><a href="/market/<%= coins.id %>"><%= coins.name %></a></td>
+						<td><%= coins.symbol %></td>
+						<td class="price_fiat_numbers"><%= coins.price_usd %></td>
+						<td class="price_btc_numbers"><%= coins.price_btc %></td>
+						<td class="market_cap_numbers"><%= coins.market_cap_usd %></td>
+						<td class="market_percent_change"><%= coins.percent_change_24h %></td>
+          </tr>
+				<% }); %>
+			</tbody>
+    </table>
+  </div>
+</div>
+
+<% include partials/footer %>

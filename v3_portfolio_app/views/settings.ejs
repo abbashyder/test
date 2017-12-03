@@ -1,0 +1,71 @@
+<% include partials/header %>
+
+
+<div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please add a <%= setting.symbol %>/BTC exchange first.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container settings-container">
+  <div class="row">
+    <div class="col-lg-12">
+      <form action="/settings" method="POST">
+        <div class="form-group" style="display: none;">
+          <input type="text" name="referer" value="<%= back %>">
+        </div>
+        <div class="form-group">
+          <label for="currency">Your Default Currency</label>
+          <select class="form-control" id="currency" name="currency" autocomplete="off">
+            <option>Australian Dollar - AUD</option>
+            <option>Canadian Dollar - CAD</option>
+            <option>Chineese Yuan - ¥</option>
+            <option>Euro - €</option>
+            <option>Hong Kong Dollar - HKD</option>
+            <option>Indian Rupee - ₹</option>
+            <option>Japan Yen - ¥</option>
+            <option>Mexico Peso - MXN</option>
+            <option>New Zealand Dollar - NZD</option>
+            <option>South African Rand - R</option>
+            <option>Swiss Franc - CHF</option>
+            <option>UK Pound - £</option>
+            <option>US Dollar - $</option>
+          </select>
+        </div>
+        <div class="form-group">
+    			<input type="submit" class="btn btn-lg btn-primary btn-block" id="click"value="Submit">
+        </div>
+      </form>
+    </div>
+    <hr style="width: 90%;">
+    <div class="col-lg-12">
+      <form action="/addFiat" id="add-fiat-settings" method="get">
+        <!-- <label for="Delete">Reset Your Portfolio</label> -->
+        <input type="submit" name="addFiat" class="btn btn-lg btn-primary btn-block" value="Add <%= setting.symbol %>">
+      </form>
+    </div>
+    <hr style="width: 90%;">
+    <div class="col-lg-12">
+      <form action="/addExchange" method="get">
+        <!-- <label for="Delete">Reset Your Portfolio</label> -->
+        <input type="submit" name="addExchange" class="btn btn-lg btn-primary btn-block" value="Add Exchange">
+      </form>
+    </div>
+    <hr style="width: 90%;">
+    <div class="col-lg-12">
+      <form action="/deleteAll" method="post">
+        <label for="Delete">Reset Your Portfolio</label>
+        <input type="submit" name="Delete" class="btn btn-lg btn-danger btn-block danger" value="Delete All">
+      </form>
+    </div>
+  </div>
+</div>
+
+<% include partials/footer %>

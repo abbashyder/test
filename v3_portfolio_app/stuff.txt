@@ -1,0 +1,27 @@
+Unoicoin API          1 in 3 mins       https://www.unocoin.com/trade?all
+Zebpay api            https://www.zebapi.com/api/v1/market/ticker/btc/inr
+
+
+
+Bittrex   -- > Anything 0.0005 Btc
+Unoicoin  -- > Anything 0.0005 - 0.0009 Btc
+Zebpay    -- > Anything 0.00
+
+
+
+tradingFeePercent       tradingFeeBtc          transferFeePercent        transferFeeBtc
+1                         0                         0                       1                 most likely
+0                         1                         1                       0                 not very likely
+0                         0                         0                       0
+
+
+7500 * x = 500 - ((7500 * x) * 0.001)
+
+7500x = 500 - 7.5x
+7507.5x = 500
+x = 500/7507.5
+units = total /
+
+
+5000 - 500 - 5
+      495

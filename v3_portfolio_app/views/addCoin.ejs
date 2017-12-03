@@ -1,0 +1,210 @@
+<% include partials/header %>
+
+<div class="container new-coin-heading">
+	<div class="row">
+		<div class="col-lg-12">
+			<h1>Add a cryptocurrency to your portfolio</h1>
+		</div>
+  </div>
+</div>
+
+<div class="modal fade" id="addFeeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please add a fee% of total fee first.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="exchangeOrderModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please select an exchange and order type first.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="exchangePriceModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please add units first.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="lessFiatModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				You dont have enough fiat to buy Bitcoin in this exchange. Add some fiat or reduce your order size.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="lessBtcAltBuyModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				You dont have enough Bitcoin to buy <%= object.name %> in this exchange. Transfer some BTC or reduce your order size.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="lessBtcModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				You are trying to sell more units of <%= object.name %> than you have. Please reduce your order size.
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please select a type order Order (Buy/Sell).
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				Please select a type order Order (Buy/Sell).
+			</div>
+			<div class="modal-footer portfolio-modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container new-coin-container">
+  <form action="/newCoin" id="add-coin-form" method="POST">
+    <div class="form-group name">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name="coin[name]" autocomplete="off" placeholder="Name" value="<%= object.name %>" required>
+    </div>
+		<div class="form-group symbol">
+      <label for="symbol">Symbol</label>
+      <input type="text" class="form-control" id="symbol" name="coin[symbol]" autocomplete="off" placeholder="Symbol" value="<%= object.symbol %>" required>
+    </div>
+		<div class="form-group">
+			<label for="exchange">Exchange</label>
+			<% if (object.name == 'Bitcoin') { %>
+				<select class="form-control" id="portfolio-exchange" name="coin[exchange]" required>
+					<option value="" selected disabled>Select an Exchange</option>
+					<% exchange.forEach(function(ex){ %>
+						<% if (ex.type == 'fiat-btc') { %>
+							<option><%= ex.exchange %></option>
+						<% } %>
+					<% }) %>
+		    </select>
+			<% }  else { %>
+				<select class="form-control" id="portfolio-exchange" name="coin[exchange]" required>
+					<option value="" selected disabled>Select an Exchange</option>
+					<% exchange.forEach(function(ex){ %>
+						<% if (ex.type != 'fiat-btc') { %>
+							<option><%= ex.exchange %></option>
+						<% } %>
+					<% }) %>
+		    </select>
+			<% } %>
+	  </div>
+		<div class="form-group">
+		  <label for="date-input">Date</label>
+			<input class="form-control" type="date" name="coin[date]" id="date-input" required>
+		</div>
+		<div class="form-group">
+		  <label for="time-input">Time</label>
+			<input class="form-control" type="time" name="coin[time]" id="date-input">
+		</div>
+    <div class="form-group order-group">
+      <label for="order">Order</label>
+      <div class="form-check form-check-inline">
+        <label class="form-check-label">
+          <input class="form-check-input" type="radio" name="coin[order]" id="order" value="buy" required> Buy
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <label class="form-check-label">
+          <input class="form-check-input" type="radio" name="coin[order]" id="order" value="sell" required> Sell
+        </label>
+      </div>
+    </div>
+    <div class="form-group units">
+      <label for="units">Units</label>
+      <input type="text" class="form-control" name="coin[units]" id="units" autocomplete="off" placeholder="Units" required>
+    </div>
+		<div class="form-group price-fiat">
+      <label for="price-fiat" id="price-label"></label>
+      <input type="text" class="form-control" id="add-price-fiat" name="coin[trade_price_fiat]" autocomplete="off" placeholder="Price Fiat" value="<%= object.price_fiat %>" required>
+    </div>
+		<% if (object.name == 'Bitcoin') { %>
+			<div class="form-group price-btc">
+	      <label for="price-btc">Price (BTC)</label>
+				<input class="form-control" type="text" value="1.00000000" id="price-btc" name="coin[trade_price_btc]" readonly required>
+	    </div>
+		<% }  else { %>
+			<div class="form-group price-btc">
+	      <label for="price-btc">Price (BTC)</label>
+	      <input type="text" class="form-control" id="price-btc" name="coin[trade_price_btc]" autocomplete="off" placeholder="Price BTC" value="<%= object.price_btc %>" required>
+	    </div>
+		<% } %>
+		<div class="form-group price-fiat">
+      <label for="fee-percent" id="fee-percent-label">Fee %</label>
+      <input type="text" class="form-control" id="add-fee-percent" name="coin[trade_fee-percent]" autocomplete="off" readonly required>
+    </div>
+		<div class="form-group price-btc">
+      <label for="fee" id="fee-label"></label>
+      <input type="text" class="form-control" id="fee" name="coin[trade_fee]" autocomplete="off" readonly required>
+    </div>
+		<div class="form-group total-fiat">
+      <label for="total-fiat" id="total-label"></label>
+      <input type="text" class="form-control" id="total-fiat" name="coin[total_price_fiat]" autocomplete="off" placeholder="Total Fiat" required>
+    </div>
+		<div class="form-group total-btc">
+      <label for="total-btc">Total (BTC)</label>
+      <input type="text" class="form-control" id="total-btc" name="coin[total_price_btc]" autocomplete="off" placeholder="Total BTC" required>
+    </div>
+    <div class="form-group">
+			<input type="submit" class="btn btn-lg btn-primary btn-block" id="click" name="" value="Submit">
+    </div>
+  </form>
+</div>
+
+<% include partials/footer %>

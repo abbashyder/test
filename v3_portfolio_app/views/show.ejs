@@ -1,0 +1,64 @@
+<% include partials/header %>
+
+<div class="container coin-container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 id="coin-name" value="<%= coin.name %>"><%= coin.name %></h1>
+      <h1>(<%= coin.symbol %>)</h1>
+      <hr>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <h3>Market Cap</h3>
+      <h5 class="market_cap_numbers"><%= coin.market_cap_usd %></h5>
+    </div>
+    <div class="col-lg-4">
+      <h3>Price USD</h3>
+      <h5 class="price_fiat_numbers"><%= coin.price_usd %></h5>
+    </div>
+    <div class="col-lg-4">
+      <h3>Price BTC</h3>
+      <h5 class="price_btc_numbers" value="<%= coin.price_btc %>"><%= coin.price_btc %></h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <h3>Percentage Change</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-4">
+      <h3>1h</h3>
+      <i class="fa fa-1x" aria-hidden="true"></i>
+      <h5 class="percentage_numbers"><%= coin.percent_change_1h %></h5>
+    </div>
+    <div class="col-lg-4">
+      <h3>24h</h3>
+      <i class="fa fa-1x" aria-hidden="true"></i>
+      <h5 class="percentage_numbers"><%= coin.percent_change_24h %></h5>
+    </div>
+    <div class="col-lg-4">
+      <h3>7d</h3>
+      <i class="fa fa-1x" aria-hidden="true"></i>
+      <h5 class="percentage_numbers"><%= coin.percent_change_7d %></h5>
+    </div>
+  </div>
+  <div class="row add-coin">
+    <div class="col-lg-12">
+      <a href="#"><button type="button" class="btn btn-primary" name="button" id="add-coin-to-portfolio">Add to Portfolio</button></a>
+      <!-- <a href="/addCoin?price_btc=<%= coin.price_btc %>&name=<%= coin.name %>&price_fiat=<%= coin.price_usd %>&symbol=<%= coin.symbol %>"><button type="button" class="btn btn-primary" name="button" id="add-coin-to-portfolio">Add to Portfolio</button></a> -->
+    </div>
+  </div>
+</div>
+
+<!-- <h1><%= setting.symbol %></h1> -->
+<script type="text/javascript">
+  var coinName = '<%= coin.name %>';
+  var coinSymbol = '<%= coin.symbol %>';
+  var priceFiat = <%= coin.price_usd %>;
+  var priceBtc = <%= coin.price_btc %>;
+  var symbol = '<%= setting.symbol %>';
+</script>
+
+<% include partials/footer %>

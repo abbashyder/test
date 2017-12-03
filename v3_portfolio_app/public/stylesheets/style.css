@@ -1,0 +1,280 @@
+@font-face {
+  font-family: myFontLol;
+  src: url(/stylesheets/fonts/neutra-demi.otf);
+}
+
+@font-face {
+  font-family: myFontLolLol;
+  src: url(/stylesheets/fonts/kaufmann-script-regular.ttf);
+}
+
+body {
+  font-family: 'Asul', sans-serif;
+}
+
+.navbar {
+  font-family: myFontLol;
+}
+
+.navbar-inverse .navbar-nav .nav-link {
+  font-size: 18px;
+}
+
+.btn-primary, .danger {
+  font-family: myFontLol;
+}
+
+.form-group > select, .form-control {
+  font-family: 'Asul', sans-serif;
+}
+.navbar-inverse .navbar-nav .nav-link:hover {
+  color: white;
+}
+
+.mr-auto {
+  margin-left: auto!important;
+  margin-right: 0px!important;
+}
+
+.market-box {
+  background-position: center;
+  background-image: url(/media/images/backgrounds/market.png);
+  margin-top: 50px;
+  background-size: 100%;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 125px 0px;
+  filter: blur(5px);
+  z-index: 1;
+}
+
+.portfolio-box {
+  background-position: center;
+  background-image: url(/media/images/backgrounds/portfolio.jpg);
+  margin-top: 50px;
+  background-size: 100%;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 125px 0px;
+  filter: blur(5px);
+  z-index: 1;
+  transform: scaleY(-1)scaleX(-1);
+}
+
+.market-data {
+  z-index: 2;
+  top: 135px;
+  position: absolute;
+  width: 100%;
+}
+
+.portfolio-top-data {
+  z-index: 2;
+  top: 135px;
+  position: absolute;
+  width: 100%;
+}
+
+.portfolio-top-data > .col-lg-12, .market-data > .col-lg-12 {
+  text-align: center;
+}
+
+.market-data h1, .portfolio-top-data h1 {
+  text-shadow: 2px 2px 3px white;
+  color: black;
+  font-size: 75px;
+}
+
+/*.market-box {
+  background-image: url(/media/images/backgrounds/market.png);
+}*/
+
+#market-coin-name > a:hover {
+  text-decoration: none!important;
+}
+.box i {
+  margin-right: 10px;
+}
+
+.h1_market {
+  display: inline;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 45px;
+  font-family: 'myFontLolLol';
+}
+
+.h1_portfolio {
+  display: inline;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 45px;
+  font-family: 'myFontLolLol';
+}
+
+.portfolio-modal-footer{
+  border-top: 0px;
+}
+
+.coin-container {
+  margin-top: 56px!important;
+  padding-top: 20px;
+}
+.coin-container .row {
+  text-align: center;
+  margin-top: 10px;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+.coin-container .row .col-lg-12 h1 {
+  display: inline;
+}
+.coin-container .row .col-lg-12 hr {
+  width: 50%;
+}
+.coin-container .row .col-lg-4 h5 {
+  margin-top: 20px!important;
+  margin-bottom: 10px!important;
+}
+
+.percentage_numbers {
+  display: inline;
+}
+.fa-arrow-down {
+  color: red;
+}
+.negPercentage {
+  color: red;
+}
+h5.negPercentage::after {
+  content: '%';
+}
+h5.posPercentage::after {
+  content: '%';
+}
+
+.settings-container {
+  padding: 0px 400px;
+  margin-top: 56px!important;
+  padding-top: 20px;
+}
+.add-coin {
+  margin-top: 30px!important;
+}
+.new-coin-heading, .transfer-coin-heading {
+  margin-top: 56px;
+  padding: 15px 0px;
+}
+.new-coin-container {
+  width: 36%;
+}
+.new-coin-heading .row, .transfer-coin-heading .row {
+  margin-right: 0;
+  margin-left: 0;
+  text-align: center;
+}
+/*.exchange {
+  width: 49%;
+}*/
+.exchange-fee {
+  display: inline-block;
+  width: 49%;
+}
+
+.exchange-fee-total {
+  display: inline-block;
+  float: right;
+  width: 49%;
+}
+
+.order-group {
+  margin-bottom: 0.5rem!important;
+}
+.order-group label {
+  width: 34%;
+}
+.order-group div {
+  width: 32%;
+  margin-left: 0px!important;
+}
+.price-btc {
+  display: inline-block;
+  float: right;
+}
+.price-fiat {
+  display: inline-block;
+  float: left;
+}
+.total-btc {
+  display: inline-block;
+  float: right;
+}
+.total-fiat {
+  display: inline-block;
+  float: left;
+}
+.name {
+  display: inline-block;
+  width: 45%;
+}
+.symbol {
+  display: inline-block;
+  float: right;
+  width: 45%;
+}
+
+.portfolio-heading {
+  margin-top: 56px;
+  text-align: center;
+}
+.portfolio-data {
+  margin-top: 15px;
+  padding-top: 10px;
+}
+.portfolio-summary {
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+.portfolio-summary>.row>.col-lg-6 {
+  text-align: center;
+}
+.portfolio-summary>.row>.col-lg-3 {
+  text-align: center;
+}
+.portfolio-summary>.row>.col-lg-6 h5 {
+  padding-top: 20px;
+}
+.portfolio-summary>.row>.col-lg-3 h5 {
+  padding-top: 20px;
+}
+/*.dataTables_wrapper .container-fluid .dt-bootstrap4 .no-footer {
+  width: 100%;
+}*/
+
+#example1_wrapper, #example2_wrapper, #example3_wrapper, #example4_wrapper, #marketTable_wrapper {
+  width: 100%;
+}
+/*.portfoio-date::after {
+  content: '<a href="/portfolio/<%= buy._id %>/edit"><button type="button" class="btn btn-primary" name="button">Edit</button></a>';
+}*/
+#delete-coin {
+  display: inline;
+}
+.fa-pencil, .fa-trash {
+  padding: 8px;
+}
+.buy-orders, .all-coins, .sell-orders, .fiat-trx {
+  text-align: center;
+  margin-bottom: 15px;
+}
+.order-type-group > label {
+  width: 30%;
+  text-align: center;
+}
+.form-check-inline {
+  width: 25%;
+}
+.exchange-or {
+  display: inline-block;
+  margin-left: 10px;
+}
