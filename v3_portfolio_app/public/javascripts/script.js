@@ -757,8 +757,11 @@ if (windowLoc == '/portfolio') {
 if (windowLoc == '/transfers') {
   $(".new-coin-container").on('click', '#transfer-units', function () {
     var exchange = $('#from-exchange').val();
-    if (exchange == null) {
+    var fee = $("#transfer-fee").val();
+    if (exchange == null && fee == '') {
       $('#exchangeModal').modal('show');
+    } else if (exchange != null && fee == '') {
+      $('#addFeeModal').modal('show');
     }
   })
 
@@ -779,26 +782,35 @@ if (windowLoc == '/transfers') {
     }
   })
 
-  $(".new-coin-container").on('click', '#to-exchange', function () {
-    var exchange = $('#from-exchange').val();
-    if (exchange == null) {
-      $('#exchangeModal').modal('show');
-    }
-  })
+  // $(".new-coin-container").on('click', '#to-exchange', function () {
+  //   var exchange = $('#from-exchange').val();
+  //   if (exchange == null) {
+  //     $('#exchangeModal').modal('show');
+  //   }
+  // })
 
   $(".new-coin-container").on('change', "#from-exchange", function () {
     var name = 'Bitcoin';
     var exchange = $(this).val();
-    var units = $("#transfer-total").val();
-    var fee = 0;
-    if (exchange == 'Bittrex') {
-      fee = (0.00050000).toFixed(8);
-      $("#transfer-fee").attr("readonly", true);
-      $("#transfer-fee").val(fee);
-    } else {
-      $("#transfer-fee").val('');
-      $("#transfer-fee").attr("readonly", false);
-    }
+    $.ajax({
+      async: false,
+      url: '/findExchange',
+      type: 'get',
+      data: {
+        name: exchange
+      },
+      dataType: 'jsonp',
+      success: function (data) {
+        // console.log(data[0].transferFeeBtc);
+        if (data[0].transferFeeBtc == 0) {
+          $("#transfer-fee").attr("readonly", false);
+          $("#transfer-fee").val("")
+        } else {
+          $("#transfer-fee").attr("readonly", true);
+          $("#transfer-fee").val((parseFloat(data[0].transferFeeBtc)).toFixed(8));
+        }
+      }
+    });
     $.ajax({
       url: '/checkExchangeUnits',
       type: 'get',
@@ -808,17 +820,47 @@ if (windowLoc == '/transfers') {
       },
       dataType: 'jsonp',
       success: function (data) {
-        // console.log(typeof(data));
-        data = (Number(data)).toFixed(8);
-        $("#transfer-units").val(data);
-        var total = Number(data) + Number(fee);
-        total = total.toFixed(8);
-        $("#transfer-total").val(total)
+        if (data == 0) {
+          $("#btcUnitsHelp").text(0);
+        } else {
+          $("#btcUnitsHelp").text((parseFloat(data)).toFixed(8));
+        }
+        // console.log(data);
         // if (total > data) {
         //   $('#lessBtcModal').modal('show');
         // }
       }
     });
+    // var units = $("#transfer-total").val();
+    // var fee = 0;
+    // if (exchange == 'Bittrex') {
+    //   fee = (0.00050000).toFixed(8);
+    //   $("#transfer-fee").attr("readonly", true);
+    //   $("#transfer-fee").val(fee);
+    // } else {
+    //   $("#transfer-fee").val('');
+    //   $("#transfer-fee").attr("readonly", false);
+    // }
+    // $.ajax({
+    //   url: '/checkExchangeUnits',
+    //   type: 'get',
+    //   data: {
+    //     name: name,
+    //     exchange: exchange
+    //   },
+    //   dataType: 'jsonp',
+    //   success: function (data) {
+    //     // console.log(typeof(data));
+    //     data = (Number(data)).toFixed(8);
+    //     $("#transfer-units").val(data);
+    //     var total = Number(data) + Number(fee);
+    //     total = total.toFixed(8);
+    //     $("#transfer-total").val(total)
+    //     // if (total > data) {
+    //     //   $('#lessBtcModal').modal('show');
+    //     // }
+    //   }
+    // });
   })
 
   $(".new-coin-container").on('input', '#transfer-units', function () {
@@ -1233,6 +1275,7 @@ function getCurrencyRate (){
               totalBtcDisplay = (totalBtcDisplay).toFixed(8);
             }
             if (order == 'buy') {
+              // console.log("lol");
               $.ajax({
                 url: '/checkExchangeUnits',
                 type: 'get',
@@ -1244,13 +1287,13 @@ function getCurrencyRate (){
                 success: function (data) {
                   if (totalBtcDisplay > data) {
                     $('#lessBtcAltBuyModal').modal('show');
-                    $("#fee").val(totalBtcFees)
+                    $("#fee").val(btcTotalFees)
                     $("#total-btc").val(totalBtcDisplay);
-                    $("#total-fiat").val(totalFiatDisplay);
+                    $("#total-fiat").val(totalFiatDisplay.toFixed(2));
                   } else {
-                    $("#fee").val(totalBtcFees)
+                    $("#fee").val(btcTotalFees)
                     $("#total-btc").val(totalBtcDisplay);
-                    $("#total-fiat").val(totalFiatDisplay);
+                    $("#total-fiat").val(totalFiatDisplay.toFixed(2));
                   }
                 }
               });
@@ -1370,7 +1413,7 @@ function getCurrencyRate (){
               var fiatTotalFee = Number(feeTotal) * Number(priceFiat);
             } else {
               var rex = feePercent.split(/\b(\d+\.\d+)\b/);
-              fees = rex[1] / 100;
+              // fees = rex[1] / 100;
               if (rex[1] == undefined) {
                 fees = rex[0] / 100;
               } else {
@@ -1388,6 +1431,7 @@ function getCurrencyRate (){
             totalFiat = totalFiat.toFixed(2);
             fiatTotalFee = fiatTotalFee.toFixed(2);
             if (order == 'buy') {
+              // console.log(totalBtc);
               $.ajax({
                 url: '/checkExchangeUnits',
                 type: 'get',
@@ -1611,11 +1655,15 @@ function getCurrencyRate (){
                 },
                 success: function (data) {
                   if (totalUsdFiat > data) {
+                    // console.log(totalUsdFiat);
+                    // console.log(data);
                     $('#lessFiatModal').modal('show');
                     $("#fee").val(fiatTotalFee)
-                    $("#total-btc").val(units.toFixed(8));
-                    $("#units").val(units.toFixed(8));
+                    $("#total-btc").val((parseFloat(units)).toFixed(8));
+                    $("#units").val((parseFloat(units)).toFixed(8));
                   } else {
+                    // console.log(fiatTotalFee);
+                    // console.log(totalUsdFiat);
                     $("#fee").val(fiatTotalFee)
                     $("#total-btc").val((parseFloat(units)).toFixed(8));
                     $("#units").val((parseFloat(units)).toFixed(8));
@@ -1660,7 +1708,11 @@ function getCurrencyRate (){
               btcTotalFee = btcTotalFee.toFixed(8);
             } else {
               var rex = feePercent.split(/\b(\d+\.\d+)\b/);
-              fees = rex[1] / 100;
+              if (rex[1] == undefined) {
+                fees = rex[0] / 100;
+              } else {
+                fees = rex[1] / 100;
+              }
               var fiatTotalFee = fees * total;
               var btcTotalFee = fiatTotalFee * priceBtc;
               // var totalFiat = Number(total) + fiatTotalFee;
@@ -1742,141 +1794,151 @@ function getCurrencyRate (){
         var name = $(this.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.lastElementChild).val();
         var exchange = $("#portfolio-exchange").val();
         var order = $("#order:checked").val();
-        var priceBtc = parseFloat($('#add-price-fiat').val());
-        var priceFiat = parseFloat($('#price-btc').val());
+        var priceBtc = parseFloat($('#price-btc').val());
+        var priceFiat = parseFloat($('#add-price-fiat').val());
         var feePercent = $("#add-fee-percent").val();
         var feeTotal = $("#fee").val();
-        // var units = total / priceBtc;
-        // var totalFiatPrice = units * priceFiat;
         if (feePercent == "" && feeTotal == "") {
           $('#addFeeModal').modal('show');
         } else {
           if (name == 'Bitcoin') {
             var units = total;
+            var totalFiatPrice = units * priceFiat;
             if (feePercent == "-")  {
               var feesFiat = feeTotal;
-              var total   
-              var totalFiatFee = Number(feeTotal) * totalFiatPrice;
+              var totalWithFees = totalFiatPrice + Number(feesFiat);
             } else {
-
+              var rex = feePercent.split(/\b(\d+\.\d+)\b/);
+              if (rex[1] == undefined) {
+                fees = rex[0] / 100;
+              } else {
+                fees = rex[1] / 100;
+              }
+              var fiatTotalFee = fees * totalFiatPrice;
+              var totalWithFees = totalFiatPrice + Number(fiatTotalFee);
+              // console.log(fees);
+              // console.log(fiatTotalFee);
+              // console.log(totalWithFees);
+              $("#fee").val((parseFloat(fiatTotalFee)).toFixed(2));
             }
-          }
-        }
-        if (name == 'Bitcoin') {
-
-
-          // var fiatFeePrice = fees * totalFiatPrice;
-          // var fiatGstPrice = fiatFeePrice * gst;
-          // var totalFiatFee = fiatFeePrice + fiatGstPrice;
-          var totalPrice = totalFiatPrice + totalFiatFee;
-          var usdRate = 1 / rate;
-          var totalUsdFiatDisplay = usdRate * totalPrice;
-          units = units.toFixed(8);
-          totalFiatFee = totalFiatFee.toFixed(2);
-          totalPrice = totalPrice.toFixed(2);
-          if (order == 'buy') {
-            $.ajax({
-              url: '/checkExchangeUnits',
-              type: 'get',
-              dataType: 'jsonp',
-              data: {
-                name: 'Fiat (USD)',
-                exchange: exchange
-              },
-              success: function (data) {
-                if (totalUsdFiatDisplay > data) {
-                  $('#lessFiatModal').modal('show');
-                  $("#fee").val(totalFiatFee)
-                  $("#units").val(units);
-                  $("#total-fiat").val(totalPrice);
-                } else {
-                  $("#fee").val(totalFiatFee)
-                  $("#units").val(units);
-                  $("#total-fiat").val(totalPrice);
+            var totalUsdFiat = totalWithFees;
+            var totalBtc = units;
+            if (order == 'buy') {
+              $.ajax({
+                url: '/checkExchangeUnits',
+                type: 'get',
+                dataType: 'jsonp',
+                data: {
+                  name: 'Fiat (USD)',
+                  exchange: exchange
+                },
+                success: function (data) {
+                  if (totalUsdFiat > data) {
+                    $('#lessFiatModal').modal('show');
+                    $("#total-fiat").val(totalWithFees.toFixed(2));
+                    $("#units").val((parseFloat(units)).toFixed(8));
+                  } else {
+                    $("#total-fiat").val(totalWithFees.toFixed(2));
+                    $("#units").val((parseFloat(units)).toFixed(8));
+                  }
                 }
-              }
-            });
+              });
+            } else {
+              $.ajax({
+                url: '/checkExchangeUnits',
+                type: 'get',
+                data: {
+                  name: name,
+                  exchange: exchange
+                },
+                dataType: 'jsonp',
+                success: function (data) {
+                  if (totalBtc > data) {
+                    $('#lessBtcModal').modal('show');
+                    $("#total-fiat").val(totalWithFees.toFixed(2));
+                    $("#units").val((parseFloat(units)).toFixed(8));
+                  } else {
+                    $("#total-fiat").val(totalWithFees.toFixed(2));
+                    $("#units").val((parseFloat(units)).toFixed(8));
+                  }
+                }
+              });
+            }
           } else {
-            $.ajax({
-              url: '/checkExchangeUnits',
-              type: 'get',
-              data: {
-                name: name,
-                exchange: exchange
-              },
-              dataType: 'jsonp',
-              success: function (data) {
-                console.log(data);
-                if (units > data) {
-                  $('#lessBtcModal').modal('show');
-                } else {
-                  $("#fee").val(totalFiatFee)
-                  $("#units").val(units);
-                  $("#total-fiat").val(totalPrice);
+            if (feePercent == "-")  {
+              var btcTotalFee = Number(feeTotal);
+              var fiatTotalFee = Number(feeTotal) * Number(priceFiat);
+              var totalFiat = Number(total) + fiatTotalFee;
+              var usdRate = 1 / rate;
+              var totalUsdFiat = totalFiat * usdRate;
+              var actualPrice = total - fiatTotalFee;
+              units = actualPrice / priceFiat;
+              units = units.toFixed(8);
+              fiatTotalFee = fiatTotalFee.toFixed(2);
+              btcTotalFee = btcTotalFee.toFixed(8);
+            } else {
+              var rex = feePercent.split(/\b(\d+\.\d+)\b/);
+              fees = rex[1] / 100;
+              var fiatTotalFee = fees * total;
+              var btcTotalFee = fiatTotalFee * priceBtc;
+              // var totalFiat = Number(total) + fiatTotalFee;
+              // var usdRate = 1 / rate;
+              // var totalUsdFiat = totalFiat * usdRate;
+              var actualPrice = total - btcTotalFee;
+              units = actualPrice / priceBtc;
+              var totalBtc = units * priceBtc;
+              // var btcTotalFee = units * fees;
+              units = units.toFixed(8);
+              totalBtc = totalBtc.toFixed(8);
+              // fiatTotalFee = fiatTotalFee.toFixed(2);
+              btcTotalFee = btcTotalFee.toFixed(8);
+            }
+            if (order == 'buy') {
+              $.ajax({
+                url: '/checkExchangeUnits',
+                type: 'get',
+                dataType: 'jsonp',
+                data: {
+                  name: 'Bitcoin',
+                  exchange: exchange
+                },
+                success: function (data) {
+                  if (totalBtc > data) {
+                    $('#lessBtcAltBuyModal').modal('show');
+                    $("#fee").val(btcTotalFee)
+                    $("#total-btc").val(totalBtc);
+                    $("#units").val(units);
+                  } else {
+                    $("#fee").val(btcTotalFee)
+                    $("#total-btc").val(totalBtc);
+                    $("#units").val(units);
+                  }
                 }
-              }
-            });
-          }
-        } else {
-          var priceBtc = parseFloat($(this.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.lastElementChild).val());
-          var priceFiat = parseFloat($(this.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.lastElementChild).val());
-          var units = total / priceBtc;
-          var totalBtcPrice = units * priceBtc;
-          var totalFiatPrice = units * priceFiat;
-          var btcFeePrice = fees * totalBtcPrice;
-          var fiatFeePrice = fees * totalFiatPrice;
-          var actualPrice = total - btcFeePrice;
-          var totalPrice = fiatFeePrice + totalFiatPrice;
-          units = actualPrice / priceBtc;
-          totalPrice = totalPrice.toFixed(2);
-          btcFeePrice = btcFeePrice.toFixed(8);
-          fiatFeePrice = fiatFeePrice.toFixed(2);
-          units = units.toFixed(8);
-          if (order == 'buy') {
-            $.ajax({
-              url: '/checkExchangeUnits',
-              type: 'get',
-              dataType: 'jsonp',
-              data: {
-                name: 'Bitcoin',
-                exchange: exchange
-              },
-              success: function (data) {
-                if (totalBtcPrice > data) {
-                  $('#lessBtcAltBuyModal').modal('show');
-                  $('#units').val(units);
-                  $('#fee').val(btcFeePrice);
-                  $('#total-fiat').val(totalPrice);
-                } else {
-                  $('#units').val(units);
-                  $('#fee').val(btcFeePrice);
-                  $('#total-fiat').val(totalPrice);
+              });
+            } else {
+              $.ajax({
+                url: '/checkExchangeUnits',
+                type: 'get',
+                data: {
+                  name: name,
+                  exchange: exchange
+                },
+                dataType: 'jsonp',
+                success: function (data) {
+                  // console.log(data);
+                  if (units > data) {
+                    $('#lessBtcModal').modal('show');
+                    $("#fee").val(btcTotalFee)
+                    $("#total-btc").val(totalBtc);
+                    $("#units").val(units);
+                  } else {
+                    $("#fee").val(btcTotalFee)
+                    $("#total-btc").val(totalBtc);
+                    $("#units").val(units);
+                  }
                 }
-              }
-            });
-          } else {
-            $.ajax({
-              url: '/checkExchangeUnits',
-              type: 'get',
-              data: {
-                name: name,
-                exchange: exchange
-              },
-              dataType: 'jsonp',
-              success: function (data) {
-                // console.log(data);
-                if (units > data) {
-                  $('#lessBtcModal').modal('show');
-                  $('#units').val(units);
-                  $('#fee').val(btcFeePrice);
-                  $('#total-fiat').val(totalPrice);
-                } else {
-                  $('#units').val(units);
-                  $('#fee').val(btcFeePrice);
-                  $('#total-fiat').val(totalPrice);
-                }
-              }
-            });
+              });
+            }
           }
         }
       });
