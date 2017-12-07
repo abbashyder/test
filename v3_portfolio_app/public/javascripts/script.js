@@ -1167,16 +1167,16 @@ function getCurrencyRate (){
         }
       })
       $(".new-coin-container").on('input', '#units', function(){
-        var name = $(this.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.lastElementChild).val();
+        var name = $("#name").val();
         var exchange = $("#portfolio-exchange").val();
-        var units = parseFloat($(this).val());
-        var priceBtc = parseFloat($(this.parentElement.nextElementSibling.nextElementSibling.lastElementChild).val());
-        var priceFiat = parseFloat($(this.parentElement.nextElementSibling.lastElementChild).val());
-        var totalBtcDisplay = units * priceBtc;
-        var totalFiatDisplay = units * priceFiat;
         var order = $("#order:checked").val();
+        var units = parseFloat($(this).val());
+        var priceBtc = parseFloat($("#price-btc").val());
+        var priceFiat = parseFloat($("#add-price-fiat").val());
         var feePercent = $("#add-fee-percent").val();
         var feeTotal = $("#fee").val();
+        var totalFiatDisplay = units * priceFiat;
+        var totalBtcDisplay = units * priceBtc;
         if (feePercent == "" && feeTotal == "") {
           $('#addFeeModal').modal('show');
         } else {
@@ -1269,10 +1269,22 @@ function getCurrencyRate (){
                 fees = rex[1] / 100;
               }
               var feeBtc = fees * totalBtcDisplay;
+              var feeFiat;
+              $.ajax({
+                async: false,
+                url: '/checkBtcPrice',
+                type: 'get',
+                dataType: 'jsonp',
+                success: function (btcPrice) {
+                  feeFiat = feeBtc * btcPrice;
+                }
+              })
               var btcTotalFees = (feeBtc).toFixed(8);
-              var usdRate = 1 / rate;
+              var fiatTotalFees =  (feeFiat).toFixed(2);
               totalBtcDisplay = totalBtcDisplay + feeBtc;
+              totalFiatDisplay = totalFiatDisplay + feeFiat;
               totalBtcDisplay = (totalBtcDisplay).toFixed(8);
+              totalFiatDisplay = (totalFiatDisplay).toFixed(2);
             }
             if (order == 'buy') {
               // console.log("lol");
@@ -1289,11 +1301,11 @@ function getCurrencyRate (){
                     $('#lessBtcAltBuyModal').modal('show');
                     $("#fee").val(btcTotalFees)
                     $("#total-btc").val(totalBtcDisplay);
-                    $("#total-fiat").val(totalFiatDisplay.toFixed(2));
+                    $("#total-fiat").val(totalFiatDisplay);
                   } else {
                     $("#fee").val(btcTotalFees)
                     $("#total-btc").val(totalBtcDisplay);
-                    $("#total-fiat").val(totalFiatDisplay.toFixed(2));
+                    $("#total-fiat").val(totalFiatDisplay);
                   }
                 }
               });
@@ -1544,7 +1556,8 @@ function getCurrencyRate (){
       }
       $(".new-coin-container").on('input', '#price-btc', function() {
         var price = $(this).val();
-        var units = $(this.parentElement.previousElementSibling.previousElementSibling.lastElementChild).val();
+        // var priceFiat = $("#add-price-fiat").val();
+        var units = $("#units").val();
         var priceBtc = price * units;
         var feeBtc = fees * priceBtc;
         var totalBtc = priceBtc + feeBtc;
@@ -1562,14 +1575,25 @@ function getCurrencyRate (){
               exchange: exchange
             },
             success: function (data) {
-              if (totalBtc > data) {
-                $('#lessBtcAltBuyModal').modal('show');
-                $('#fee').val(feeBtc);
-                $('#total-btc').val(totalBtc);
-              } else {
-                $('#fee').val(feeBtc);
-                $('#total-btc').val(totalBtc);
-              }
+              $.ajax({
+                url: '/checkBtcPrice',
+                type: 'get',
+                dataType: 'jsonp',
+                success: function (btcPrice) {
+                  var newPrice = (btcPrice * price).toFixed(2);
+                  var newTotal = (btcPrice * Number(totalBtc)).toFixed(2);
+                  $("#add-price-fiat").val(newPrice);
+                  $("#total-fiat").val(newTotal);
+                  if (totalBtc > data) {
+                    $('#lessBtcAltBuyModal').modal('show');
+                    $('#fee').val(feeBtc);
+                    $('#total-btc').val(totalBtc);
+                  } else {
+                    $('#fee').val(feeBtc);
+                    $('#total-btc').val(totalBtc);
+                  }
+                }
+              })
             }
           });
         } else {
@@ -1634,7 +1658,6 @@ function getCurrencyRate (){
               }
               var fiatTotalFee = fees * total;
             }
-            var totalFiat = Number(total) + fiatTotalFee;
             var actualPrice = total - fiatTotalFee;
             var usdRate = 1 / rate;
             var totalUsdFiat = total * usdRate;
@@ -1642,7 +1665,6 @@ function getCurrencyRate (){
             units = units.toFixed(8);
             var totalBtc = units;
             totalBtc = (parseFloat(total)).toFixed(8);
-            totalFiat = totalFiat.toFixed(2);
             fiatTotalFee = fiatTotalFee.toFixed(2);
             if (order == 'buy') {
               $.ajax({
@@ -1655,15 +1677,11 @@ function getCurrencyRate (){
                 },
                 success: function (data) {
                   if (totalUsdFiat > data) {
-                    // console.log(totalUsdFiat);
-                    // console.log(data);
                     $('#lessFiatModal').modal('show');
                     $("#fee").val(fiatTotalFee)
                     $("#total-btc").val((parseFloat(units)).toFixed(8));
                     $("#units").val((parseFloat(units)).toFixed(8));
                   } else {
-                    // console.log(fiatTotalFee);
-                    // console.log(totalUsdFiat);
                     $("#fee").val(fiatTotalFee)
                     $("#total-btc").val((parseFloat(units)).toFixed(8));
                     $("#units").val((parseFloat(units)).toFixed(8));
@@ -1714,13 +1732,21 @@ function getCurrencyRate (){
                 fees = rex[1] / 100;
               }
               var fiatTotalFee = fees * total;
-              var btcTotalFee = fiatTotalFee * priceBtc;
+              // console.log(fees + " " + priceFiat);
+              // console.log(total);
+              var x = ((total - (fees * priceFiat)) / (fees + priceFiat));
+              console.log(x);
+              // console.log(fiatTotalFee);
+              // console.log(btcTotalFee);
               // var totalFiat = Number(total) + fiatTotalFee;
               // var usdRate = 1 / rate;
               // var totalUsdFiat = totalFiat * usdRate;
-              var actualPrice = total - btcTotalFee;
-              units = actualPrice / priceBtc;
+              var actualPrice = total - fiatTotalFee;
+              // console.log(actualPrice);
+              units = actualPrice / priceFiat;
               var totalBtc = units * priceBtc;
+              var btcTotalFee = fees * totalBtc;
+              // console.log(total + " " + actualPrice + " " + units + " " + totalBtc);
               // var btcTotalFee = units * fees;
               units = units.toFixed(8);
               totalBtc = totalBtc.toFixed(8);
@@ -1821,7 +1847,8 @@ function getCurrencyRate (){
               // console.log(totalWithFees);
               $("#fee").val((parseFloat(fiatTotalFee)).toFixed(2));
             }
-            var totalUsdFiat = totalWithFees;
+            var usdRate = 1 / rate;
+            var totalUsdFiat = totalWithFees * usdRate;
             var totalBtc = units;
             if (order == 'buy') {
               $.ajax({
@@ -1879,8 +1906,8 @@ function getCurrencyRate (){
             } else {
               var rex = feePercent.split(/\b(\d+\.\d+)\b/);
               fees = rex[1] / 100;
-              var fiatTotalFee = fees * total;
-              var btcTotalFee = fiatTotalFee * priceBtc;
+              var btcTotalFee = fees * total;
+              var fiatTotalFee = btcTotalFee * priceBtc;
               // var totalFiat = Number(total) + fiatTotalFee;
               // var usdRate = 1 / rate;
               // var totalUsdFiat = totalFiat * usdRate;
